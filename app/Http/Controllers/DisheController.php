@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DisheRequest;
 use App\Models\Dishe;
 use App\Notifications\DisheCreate;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class DisheController extends Controller
 {
@@ -26,16 +27,17 @@ class DisheController extends Controller
      */
     public function store(DisheRequest $request)
     {
+        Gate::authorize('create', Dishe::class);
         $path = $request->file('image')->store('dishes', 'public');
         $path = asset('storage/' . $path);
-        $dishe = Dishe::create([
+        $dish = Dishe::create([
             'name' => $request->name,
             'description' => $request->description,
             'image' => $path,
             'user_id' => auth()->id(),
         ]);
-        auth()->notify(new DisheCreate());
-        return response()->json($dishe, 201);
+        auth()->user()->notify(new DisheCreate());
+        return response()->json($dish, 201);
     }
 
     /**
@@ -44,8 +46,8 @@ class DisheController extends Controller
     public function show(string $id)
     {
         $dishe = Dishe::find($id);
-        if($dishe->isEmpty()){
-            return response()->json(['error' => 'No dishe found'], 404);
+        if(!$dishe){
+            return response()->json(['error' => 'No dish found'], 404);
         }
         return response()->json($dishe, 200);
     }
@@ -56,7 +58,7 @@ class DisheController extends Controller
     public function update(DisheRequest $request, string $id)
     {
         $dishe = Dishe::find($id);
-        if($dishe->isEmpty()){
+        if(!$dishe){
             return response()->json(['error' => 'No dishe found'], 404);
         }
         Storage::disk('public')->delete($dishe->image);
@@ -76,10 +78,12 @@ class DisheController extends Controller
      */
     public function destroy(string $id)
     {
-        $dishe = Dishe::find($id);
-        if($dishe->isEmpty()){
-            return response()->json(['error' => 'No dishe found'], 404);
+        $dish = Dishe::find($id);
+        Gate::authorize('delete', $dish);
+        if(!$dish){
+            return response()->json(['error' => 'No dish found'], 404);
         }
-        return response()->json(null, 200);
+        Dishe::destroy($dish->id);
+        return response()->json(null, 204);
     }
 }

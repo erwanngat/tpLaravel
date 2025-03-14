@@ -29,7 +29,7 @@ class DishePolicy
      */
     public function create(User $user): Response
     {
-        return $user->can('create dishes') ? Response::allow() : Response::deny('You cannot create dishes');
+        return $user->can('create dishes', 'api') ? Response::allow() : Response::deny('You cannot create dishes');
     }
 
     /**
@@ -43,9 +43,9 @@ class DishePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Dishe $dishe): Response
+    public function delete(User $user, Dishe $dish): Response
     {
-        return $user->can('create dishes') ? Response::allow() : Response::deny('You cannot delete dishes');
+        return $user->can('delete dishes', 'api') ? Response::allow() : Response::deny('You cannot delete dishes');
     }
 
     /**

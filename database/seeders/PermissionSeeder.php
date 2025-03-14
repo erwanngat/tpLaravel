@@ -14,9 +14,9 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::create(['name' => 'create dishes']);
-        Permission::create(['name' => 'delete dishes']);
-        $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'web']);
+        Permission::create(['name' => 'create dishes', 'guard_name' => 'api']);
+        Permission::create(['name' => 'delete dishes', 'guard_name' => 'api']);
+        $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'api']);
         $adminRole->givePermissionTo('create dishes');
         $adminRole->givePermissionTo('delete dishes');
     }

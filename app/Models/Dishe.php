@@ -11,7 +11,7 @@ class Dishe extends Model
 
     protected $fillable = ['name', 'description', 'image', 'user_id'];
     public $casts = ['description' => 'encrypted'];
-    public function author(){
+    public function user(){
         return $this->belongsTo(User::class);
     }
 }

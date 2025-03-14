@@ -24,7 +24,7 @@ class DisheFactory extends Factory
             'name' => $faker->foodName(),
             'description' => $faker->sentence(15),
             'image' => $faker->imageUrl($width = 640, $height = 480),
-            'user_id' =>User::factory()
+            'user_id' => User::factory()
         ];
     }
 }
